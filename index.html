@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soham Dutta — ML Systems Engineer</title>
+<meta name="description" content="Soham Dutta — ML systems engineer working on inference optimization, distributed training and memory management.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg:#0B0D10;
+    --surface:#12151A;
+    --surface-2:#181C22;
+    --border:#262B33;
+    --text:#E7E4DD;
+    --text-dim:#8B909B;
+    --text-faint:#565C67;
+    --accent:#E3A857;
+    --accent-dim:rgba(227,168,87,0.14);
+    --accent-line:rgba(227,168,87,0.35);
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --sans:'Inter', system-ui, sans-serif;
+    --maxw:900px;
+    --nav-w:220px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;text-decoration:none;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px;}
+
+  ::selection{background:var(--accent-dim); color:var(--accent);}
+
+  .mono{font-family:var(--mono);}
+
+  /* ---------- layout shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns:var(--nav-w) 1fr;
+    max-width:1280px;
+    margin:0 auto;
+  }
+
+  @media (max-width:860px){
+    .shell{grid-template-columns:1fr;}
+  }
+
+  /* ---------- memory-map nav ---------- */
+  .memnav{
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:48px 0 48px 40px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    border-right:1px solid var(--border);
+  }
+
+  @media (max-width:860px){
+    .memnav{
+      position:sticky;
+      height:auto;
+      padding:16px 20px;
+      border-right:none;
+      border-bottom:1px solid var(--border);
+      background:rgba(11,13,16,0.92);
+      backdrop-filter:blur(8px);
+      z-index:50;
+    }
+    .memnav .segments{
+      flex-direction:row;
+      overflow-x:auto;
+      gap:18px;
+      padding-bottom:4px;
+    }
+    .memnav .brand, .memnav .navfoot{display:none;}
+    .memnav .segments::-webkit-scrollbar{display:none;}
+  }
+
+  .memnav .brand{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--text-faint);
+    letter-spacing:0.02em;
+    margin-bottom:56px;
+  }
+  .memnav .brand strong{color:var(--text-dim); font-weight:500;}
+
+  .segments{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+
+  .segments a{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+    padding-left:14px;
+    border-left:2px solid var(--border);
+    transition:color 0.15s ease, border-color 0.15s ease;
+    white-space:nowrap;
+  }
+  .segments a .seg-name{
+    font-family:var(--sans);
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+  .segments a:hover, .segments a.active{
+    color:var(--accent);
+    border-left-color:var(--accent);
+  }
+  .segments a:hover .seg-name, .segments a.active .seg-name{color:var(--text);}
+
+  .navfoot{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+  }
+  .navfoot a:hover{color:var(--accent);}
+
+  /* ---------- main ---------- */
+  main{padding:0 40px 40px;}
+  @media (max-width:860px){main{padding:0 20px 40px;}}
+
+  section{
+    max-width:var(--maxw);
+    padding:96px 0 32px;
+    border-bottom:1px solid var(--border);
+    scroll-margin-top:24px;
+  }
+  section:last-of-type{border-bottom:none;}
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--accent);
+    letter-spacing:0.08em;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:6px;height:6px;
+    background:var(--accent);
+    display:inline-block;
+    border-radius:1px;
+  }
+
+  h1,h2,h3{font-family:var(--sans); letter-spacing:-0.01em; font-weight:800;}
+
+  /* ---------- hero ---------- */
+  #hero{padding-top:64px; border-bottom:1px solid var(--border);}
+  .hero-title{
+    font-size:clamp(34px,5vw,52px);
+    line-height:1.05;
+    margin-bottom:18px;
+  }
+  .hero-title .cursor{
+    display:inline-block;
+    width:0.5em;
+    background:var(--accent);
+    animation:blink 1.1s steps(1) infinite;
+    margin-left:4px;
+  }
+  @keyframes blink{50%{opacity:0;}}
+
+  .hero-lede{
+    font-size:18px;
+    color:var(--text-dim);
+    max-width:56ch;
+    margin-bottom:14px;
+  }
+  .hero-sub{
+    font-size:15px;
+    color:var(--text-faint);
+    max-width:60ch;
+    margin-bottom:36px;
+  }
+
+  .timeline{
+    position:relative;
+    margin-bottom:40px;
+    max-width:560px;
+    padding-left:22px;
+  }
+  .timeline::before{
+    content:'';
+    position:absolute;
+    left:5px; top:6px; bottom:6px;
+    width:1px;
+    background:var(--border);
+  }
+  .tl-item{
+    position:relative;
+    padding-bottom:22px;
+  }
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:'';
+    position:absolute;
+    left:-22px; top:5px;
+    width:9px; height:9px;
+    border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--accent-line);
+  }
+  .tl-item.current::before{
+    background:var(--accent);
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-dim);
+  }
+  .tl-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .tl-role{font-size:14.5px; font-weight:600; color:var(--text);}
+  .tl-org{color:var(--text-dim); font-weight:400;}
+  .tl-date{font-family:var(--mono); font-size:11px; color:var(--text-faint); white-space:nowrap;}
+
+  .hero-links{display:flex; flex-wrap:wrap; gap:12px;}
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    padding:10px 16px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    color:var(--text-dim);
+    transition:border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+  .btn:hover{border-color:var(--accent-line); color:var(--accent); background:var(--accent-dim);}
+  .btn.primary{border-color:var(--accent-line); color:var(--accent); background:var(--accent-dim);}
+  .btn.primary:hover{background:var(--accent); color:var(--bg);}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid; grid-template-columns:1fr; gap:28px;}
+  #about p{color:var(--text-dim); max-width:62ch; margin-bottom:14px;}
+  #about p:last-child{margin-bottom:0;}
+
+  .edu-list{margin-top:28px; display:flex; flex-direction:column; gap:18px;}
+  .edu-item{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    gap:16px;
+    font-size:14.5px;
+  }
+  @media (max-width:600px){.edu-item{grid-template-columns:1fr; gap:4px;}}
+  .edu-item .period{font-family:var(--mono); font-size:12px; color:var(--text-faint); padding-top:2px;}
+  .edu-item .school{color:var(--text-dim); font-size:13.5px; margin-top:2px;}
+
+  /* ---------- experience ---------- */
+  .xp-item{margin-bottom:36px;}
+  .xp-item:last-child{margin-bottom:0;}
+  .xp-head{
+    display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px 16px;
+    margin-bottom:8px;
+  }
+  .xp-role{font-size:16.5px; font-weight:700;}
+  .xp-org{color:var(--accent); font-weight:600;}
+  .xp-period{font-family:var(--mono); font-size:12px; color:var(--text-faint); white-space:nowrap;}
+  .xp-item ul{list-style:none; color:var(--text-dim); font-size:14.5px;}
+  .xp-item li{position:relative; padding-left:18px; margin-bottom:6px;}
+  .xp-item li::before{content:'—'; position:absolute; left:0; color:var(--text-faint);}
+  .xp-stack{font-family:var(--mono); font-size:12px; color:var(--text-faint); margin-top:8px;}
+
+  /* ---------- projects ---------- */
+  .proj-card{
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:24px 26px;
+    margin-bottom:20px;
+    background:var(--surface);
+    transition:border-color 0.15s ease;
+  }
+  .proj-card:hover{border-color:var(--accent-line);}
+  .proj-head{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; flex-wrap:wrap;}
+  .proj-name{font-size:17px; font-weight:700;}
+  .tag{
+    font-family:var(--mono);
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    padding:3px 8px;
+    border-radius:4px;
+    border:1px solid var(--border);
+    color:var(--text-faint);
+    white-space:nowrap;
+  }
+  .tag.progress{color:var(--accent); border-color:var(--accent-line); background:var(--accent-dim);}
+
+  .proj-desc{color:var(--text-dim); font-size:14.5px; margin-bottom:12px;}
+  .proj-meta{display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center;}
+  .proj-stack{font-family:var(--mono); font-size:12px; color:var(--text-faint);}
+  .proj-link{font-family:var(--mono); font-size:12px; color:var(--accent); margin-left:auto;}
+  .proj-link:hover{text-decoration:underline;}
+
+  .proj-minor-heading{
+    font-family:var(--mono); font-size:12px; color:var(--text-faint);
+    margin:36px 0 14px; letter-spacing:0.04em;
+  }
+
+  /* ---------- skills ---------- */
+  .stack-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:28px 40px;
+  }
+  @media (max-width:600px){.stack-grid{grid-template-columns:1fr;}}
+  .stack-group h3{
+    font-family:var(--mono); font-size:12px; color:var(--text-faint);
+    font-weight:500; letter-spacing:0.04em; margin-bottom:12px;
+  }
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    font-family:var(--mono); font-size:12.5px;
+    padding:6px 11px;
+    border:1px solid var(--border);
+    border-radius:5px;
+    color:var(--text-dim);
+  }
+
+  /* ---------- contact/footer ---------- */
+  #contact{padding-bottom:96px;}
+  .contact-lede{color:var(--text-dim); max-width:56ch; margin-bottom:28px; font-size:16px;}
+  .contact-links{display:flex; flex-wrap:wrap; gap:14px; margin-bottom:48px;}
+
+  footer{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-faint);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <nav class="memnav">
+    <div class="brand"><strong>soham@dutta</strong>:~$</div>
+
+    <div class="segments" id="segments">
+      <a href="#hero" data-target="hero" class="active"><span class="addr">0x00</span><span class="seg-name">boot</span></a>
+      <a href="#about" data-target="about"><span class="addr">0x01</span><span class="seg-name">about</span></a>
+      <a href="#experience" data-target="experience"><span class="addr">0x02</span><span class="seg-name">experience</span></a>
+      <a href="#projects" data-target="projects"><span class="addr">0x03</span><span class="seg-name">projects</span></a>
+      <a href="#skills" data-target="skills"><span class="addr">0x04</span><span class="seg-name">stack</span></a>
+      <a href="#contact" data-target="contact"><span class="addr">0x05</span><span class="seg-name">contact</span></a>
+    </div>
+
+    <div class="navfoot">
+      <a href="https://github.com/SohamDutta2002" target="_blank" rel="noopener">github.com/SohamDutta2002</a>
+      <a href="https://www.linkedin.com/in/soham-dutta-6932031b5" target="_blank" rel="noopener">linkedin/soham-dutta</a>
+      <span>Howrah, India</span>
+    </div>
+  </nav>
+
+  <main>
+
+    <section id="hero">
+      <span class="eyebrow">0x00 — boot</span>
+      <h1 class="hero-title">Soham Dutta<span class="cursor" aria-hidden="true"></span></h1>
+      <p class="hero-lede">ML systems engineer working on the infrastructure underneath large models — inference serving, distributed training, and memory management.</p>
+      <p class="hero-sub">Signal processing background (IIEST Howrah) moving down the stack into systems: KV cache management, communication-compute overlap, and inference engine internals.</p>
+
+      <div class="timeline">
+        <div class="tl-item current">
+          <div class="tl-row">
+            <span class="tl-role">M.Tech, Signal Processing <span class="tl-org">— IIEST Howrah</span></span>
+            <span class="tl-date">Aug 2025 – Present</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-row">
+            <span class="tl-role">Summer Research Intern <span class="tl-org">— IIT Bombay, FedEx CALA</span></span>
+            <span class="tl-date">Apr – Sep 2024</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-row">
+            <span class="tl-role">Research Associate <span class="tl-org">— Indian Statistical Institute</span></span>
+            <span class="tl-date">Mar 2024 – Apr 2025</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-row">
+            <span class="tl-role">Data Science Intern <span class="tl-org">— Entiovi Technologies</span></span>
+            <span class="tl-date">Jun – Sep 2023</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-row">
+            <span class="tl-role">B.Tech, Computer Science <span class="tl-org">— Heritage Institute of Technology</span></span>
+            <span class="tl-date">Oct 2021 – Jul 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-links">
+        <a class="btn primary" href="#projects">View projects</a>
+        <a class="btn" href="mailto:sohamsouthpoint02@gmail.com">Email me</a>
+        <a class="btn" href="https://github.com/SohamDutta2002" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="btn" href="/resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+      </div>
+    </section>
+
+    <section id="about">
+      <span class="eyebrow">0x01 — about</span>
+      <h2 style="font-size:26px; margin-bottom:20px;">Background</h2>
+      <div class="about-grid">
+        <p>I started in signal processing and stochastic modeling — MDPs, SDEs, and Monte Carlo methods for financial risk at IIT Bombay's FedEx Centre for Advanced Logistics, and quantum simulation research at the Indian Statistical Institute. That work was fundamentally about modeling systems under uncertainty at scale.</p>
+        <p>I've since moved toward the systems layer of ML: how inference actually gets served, how gradients get communicated across GPUs, and how memory gets managed under load. My current projects sit at the intersection of compilers, distributed systems, and ML serving infrastructure.</p>
+      </div>
+
+      <div class="edu-list">
+        <div class="edu-item">
+          <div class="period mono">Aug 2025 –<br>Present</div>
+          <div>
+            <div><strong>M.Tech, Signal Processing</strong> — GPA 8.6/10</div>
+            <div class="school">IIEST Howrah</div>
+          </div>
+        </div>
+        <div class="edu-item">
+          <div class="period mono">Oct 2021 –<br>Jul 2025</div>
+          <div>
+            <div><strong>B.Tech, Computer Science & Engineering</strong> — GPA 8.0/10</div>
+            <div class="school">Heritage Institute of Technology, Kolkata</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <span class="eyebrow">0x02 — experience</span>
+      <h2 style="font-size:26px; margin-bottom:28px;">Experience</h2>
+
+      <div class="xp-item">
+        <div class="xp-head">
+          <div><span class="xp-role">Summer Research Intern</span> — <span class="xp-org">IIT Bombay, FedEx Centre for Advanced Logistics & Analytics</span></div>
+          <div class="xp-period">Apr – Sep 2024 · Mumbai</div>
+        </div>
+        <ul>
+          <li>Developed MDPs and MCMC methods for financial risk analysis, improving simulation accuracy by 20%.</li>
+          <li>Ran 200+ simulations analyzing random walk convergence to GBM via Donsker's Invariance Principle, increasing prediction reliability by 25%.</li>
+          <li>Modeled asset prices with SDEs achieving 95% accuracy.</li>
+        </ul>
+        <div class="xp-stack">Python · NumPy · SciPy · Pandas · Matplotlib</div>
+      </div>
+
+      <div class="xp-item">
+        <div class="xp-head">
+          <div><span class="xp-role">Research Associate</span> — <span class="xp-org">Indian Statistical Institute, Applied Statistics Unit</span></div>
+          <div class="xp-period">Mar 2024 – Apr 2025 · Kolkata</div>
+        </div>
+        <ul>
+          <li>Implemented Monte Carlo simulated annealing to optimize MUBs in 4D quantum systems, reducing error rate 20% vs. traditional methods.</li>
+          <li>Simulated up to 4 MUBs in 4D quantum systems achieving 98% measurement fidelity.</li>
+        </ul>
+        <div class="xp-stack">Qiskit · PennyLane · D-Wave</div>
+      </div>
+
+      <div class="xp-item">
+        <div class="xp-head">
+          <div><span class="xp-role">Data Science Intern</span> — <span class="xp-org">Entiovi Technologies</span></div>
+          <div class="xp-period">Jun – Sep 2023 · Kolkata</div>
+        </div>
+        <ul>
+          <li>Optimized production output for an industrial refinery client, reducing operational costs by 10%.</li>
+          <li>Built regression models using SGD & genetic algorithms, maintaining error margin under 3%.</li>
+        </ul>
+        <div class="xp-stack">Scikit-Learn · TensorFlow</div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <span class="eyebrow">0x03 — projects</span>
+      <h2 style="font-size:26px; margin-bottom:8px;">Systems &amp; infra projects</h2>
+      <p style="color:var(--text-faint); font-size:13.5px; margin-bottom:28px;">Active portfolio work, ordered by what I'm deepest into right now.</p>
+
+      <div class="proj-card">
+        <div class="proj-head">
+          <span class="proj-name">Paged KV Cache Memory Manager</span>
+          <span class="tag progress">In progress</span>
+        </div>
+        <p class="proj-desc">A vLLM PagedAttention-inspired memory manager built from scratch: block allocator, block table, and copy-on-write semantics for beam search, split across a three-crate Rust workspace with a CUDA kernel layer.</p>
+        <div class="proj-meta">
+          <span class="proj-stack">Rust · CUDA C++ · paged-kv-core · paged-kv-cuda</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-head">
+          <span class="proj-name">Communication–Compute Overlap Scheduler</span>
+          <span class="tag progress">In progress</span>
+        </div>
+        <p class="proj-desc">Custom PyTorch autograd hooks with NCCL all-reduce bucketing to overlap gradient communication with backward compute in distributed training. Runs locally over <code>gloo</code>, benchmarked on rented multi-GPU cloud instances.</p>
+        <div class="proj-meta">
+          <span class="proj-stack">PyTorch · NCCL · gloo · RunPod / Vast.ai / Lambda</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-head">
+          <span class="proj-name">SGLang / RadixAttention Benchmarking Suite</span>
+          <span class="tag progress">In progress</span>
+        </div>
+        <p class="proj-desc">Benchmarks RadixAttention against multi-turn agent sessions, multi-agent fan-out, RAG pipelines, and self-consistency sampling on a single rented GPU, instrumented with Prometheus/Grafana, tracking cost-per-1,000-agent-turns.</p>
+        <div class="proj-meta">
+          <span class="proj-stack">SGLang · Prometheus · Grafana</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-head">
+          <span class="proj-name">Stateful Multi-Session AI Agent</span>
+        </div>
+        <p class="proj-desc">A three-tier memory architecture (hot / warm / cold) with salience scoring and KV cache eviction, served through a vLLM + LMCache layer — built to move past typical vector-database chatbot patterns.</p>
+        <div class="proj-meta">
+          <span class="proj-stack">vLLM · LMCache · Python</span>
+        </div>
+      </div>
+
+      <div class="proj-minor-heading">// earlier / academic</div>
+
+      <div class="proj-card">
+        <div class="proj-head">
+          <span class="proj-name">Agent-to-Agent Communication Framework</span>
+        </div>
+        <p class="proj-desc">Multi-agent framework enabling autonomous agents to exchange structured messages, negotiate tasks, and collaboratively solve problems via an asynchronous message-passing protocol. Part of IIEST Shibpur ETCE departmental projects.</p>
+        <div class="proj-meta">
+          <span class="proj-stack">Python · LangChain · AutoGen · FastAPI · WebSockets · Redis</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-head">
+          <span class="proj-name">LLVM/MLIR Transform-Dialect Autotuning</span>
+        </div>
+        <p class="proj-desc">Matmul kernel optimization using the MLIR Transform dialect, documented with a paper-style README.</p>
+        <div class="proj-meta">
+          <span class="proj-stack">LLVM · MLIR</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-head">
+          <span class="proj-name">Graph-VAE for Molecule Generation</span>
+        </div>
+        <p class="proj-desc">A Graph Variational Autoencoder for generating molecular structures from graph-based chemical compound representations.</p>
+        <div class="proj-meta">
+          <span class="proj-stack">Python · PyTorch · TensorFlow</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <span class="eyebrow">0x04 — stack</span>
+      <h2 style="font-size:26px; margin-bottom:28px;">Stack</h2>
+
+      <div class="stack-grid">
+        <div class="stack-group">
+          <h3>Systems &amp; infra</h3>
+          <div class="chip-row">
+            <span class="chip">CUDA</span><span class="chip">vLLM</span><span class="chip">SGLang</span>
+            <span class="chip">NCCL</span><span class="chip">Ray</span><span class="chip">Docker</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>Languages</h3>
+          <div class="chip-row">
+            <span class="chip">Python</span><span class="chip">Rust</span><span class="chip">C++</span>
+            <span class="chip">Julia</span><span class="chip">SQL</span><span class="chip">MATLAB</span><span class="chip">R</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>ML frameworks</h3>
+          <div class="chip-row">
+            <span class="chip">PyTorch</span><span class="chip">TensorFlow</span><span class="chip">Scikit-Learn</span>
+            <span class="chip">Qiskit</span><span class="chip">PennyLane</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>Platforms &amp; tools</h3>
+          <div class="chip-row">
+            <span class="chip">AWS</span><span class="chip">GCP</span><span class="chip">Linux</span>
+            <span class="chip">Git</span><span class="chip">Jupyter</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <span class="eyebrow">0x05 — contact</span>
+      <h2 style="font-size:26px; margin-bottom:16px;">Get in touch</h2>
+      <p class="contact-lede">Open to ML infra, inference optimization, and systems engineering roles. Happy to talk about any of the projects above in detail.</p>
+
+      <div class="contact-links">
+        <a class="btn primary" href="mailto:sohamsouthpoint02@gmail.com">sohamsouthpoint02@gmail.com</a>
+        <a class="btn" href="https://github.com/SohamDutta2002" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/in/soham-dutta-6932031b5" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+
+      <footer>
+        <span>© 2026 Soham Dutta</span>
+        <span>Howrah, West Bengal, India</span>
+      </footer>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // active section highlight in the memory-map nav
+  const links = document.querySelectorAll('.segments a');
+  const sections = Array.from(links).map(l => document.getElementById(l.dataset.target));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = document.querySelector('.segments a[data-target="' + entry.target.id + '"]');
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+
+  sections.forEach(s => { if (s) observer.observe(s); });
+</script>
+
+</body>
+</html>
